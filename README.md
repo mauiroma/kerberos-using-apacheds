@@ -80,6 +80,8 @@ Use `stop` command line argument:
 
 	$ java -jar target/kerberos-using-apacheds.jar stop
 
+# Testing into EAP 7.2
+
 ## Generate keytab
 
 The project contains a simple Kerberos keytab generator:
@@ -98,13 +100,15 @@ The project contains a simple Kerberos keytab generator:
 ## Configure EAP V 7.2
 
 	cd demo-app
+	cp ../krb5.conf ../http.keytab $EAP72_HOME/
 	$EAP72_HOME/bin/standalone.sh
 	$EAP72_HOME/bin/jboss-cli.sh -c --file=jboss-cli-command.xml
 	mvn cleap package
-	cp ../krb5.conf ../http.keytab $EAP72_HOME/
 	mv target/spnego-demo.war $EAP72_HOME/deployment
 	sh ./run-browser.sh
 
 if you used `tstark` user when you ran `kinit` command you be able to view `marvel` page but not dccomics page
+
 if you used `bwayne` user when you ran `kinit` command you be able to view `dccomics` page but not marvel page
+
 if you missed to authenticate with kerberos, the security method allow fallback with basic where the browser prompt in order to insert credentials
