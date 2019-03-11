@@ -3,6 +3,12 @@ objectClass: organizationalUnit
 objectClass: top
 ou: Users
 
+dn: ou=Groups,dc=jboss,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: Groups
+
+
 dn: uid=krbtgt,ou=Users,dc=jboss,dc=org
 objectClass: top
 objectClass: person
@@ -25,7 +31,7 @@ objectClass: krb5kdcentry
 cn: LDAP
 sn: Service
 uid: ldap
-userPassword: randall
+userPassword: secret
 krb5PrincipalName: ldap/${hostname}@JBOSS.ORG
 krb5KeyVersionNumber: 0
 
@@ -55,32 +61,6 @@ userPassword: httppwd
 krb5PrincipalName: HTTP/${hostname}@JBOSS.ORG
 krb5KeyVersionNumber: 0
 
-dn: uid=hnelson,ou=Users,dc=jboss,dc=org
-objectClass: top
-objectClass: person
-objectClass: inetOrgPerson
-objectClass: krb5principal
-objectClass: krb5kdcentry
-cn: Horatio Nelson
-sn: Nelson
-uid: hnelson
-userPassword: secret
-krb5PrincipalName: hnelson@JBOSS.ORG
-krb5KeyVersionNumber: 0
-
-dn: uid=jduke,ou=Users,dc=jboss,dc=org
-objectClass: top
-objectClass: person
-objectClass: inetOrgPerson
-objectClass: krb5principal
-objectClass: krb5kdcentry
-cn: Java Duke
-sn: duke
-uid: jduke
-userPassword: theduke
-krb5PrincipalName: jduke@JBOSS.ORG
-krb5KeyVersionNumber: 0
-
 dn: uid=gsstestserver,ou=Users,dc=jboss,dc=org
 objectClass: top
 objectClass: person
@@ -93,3 +73,41 @@ uid: gsstestserver
 userPassword: gsstestpwd
 krb5PrincipalName: gsstestserver/xxx@JBOSS.ORG
 krb5KeyVersionNumber: 0
+
+dn: uid=tstark,ou=Users,dc=jboss,dc=org
+objectClass: top
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: krb5principal
+objectClass: krb5kdcentry
+cn: Tony
+sn: Stark
+uid: tstark
+userPassword: password
+krb5PrincipalName: tstark@JBOSS.ORG
+krb5KeyVersionNumber: 0
+
+dn: uid=bwayne,ou=Users,dc=jboss,dc=org
+objectClass: top
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: krb5principal
+objectClass: krb5kdcentry
+cn: Bruce
+sn: Wayne
+uid: bwayne
+userPassword: password
+krb5PrincipalName: bwayne@JBOSS.ORG
+krb5KeyVersionNumber: 0
+
+dn: cn=dccomics,ou=Groups,dc=jboss,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: dccomics
+member: uid=bwayne,ou=Users,dc=jboss,dc=org
+
+dn: cn=marvel,ou=Groups,dc=jboss,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: marvel
+member: uid=tstark,ou=Users,dc=jboss,dc=org

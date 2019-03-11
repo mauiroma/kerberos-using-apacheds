@@ -1,0 +1,62 @@
+batch
+/subsystem=logging/logger=org.jboss.security:add(category=org.jboss.security, level=TRACE)
+/subsystem=logging/logger=org.jboss.as.security:add(category=org.jboss.as.security, level=TRACE)
+/subsystem=logging/console-handler=CONSOLE:write-attribute(name=level,value=TRACE)
+/system-property=java.security.krb5.conf:add(value="${jboss.server.base.dir}/krb5.conf")
+/system-property=kerberos.keytab:add(value="${jboss.server.base.dir}/http.keytab")
+/system-property=kerberos.spn:add(value="HTTP/localhost@JBOSS.ORG")
+/system-property=ldap.url:add(value="ldap://localhost:10389")
+/subsystem=security/security-domain=host:add(cache-type=default)
+/subsystem=security/security-domain=host/authentication=classic:add( \
+    login-modules=[ \
+        {"code"=>"Kerberos", "flag"=>"required", "module-options"=>[ \
+            ("debug"=>"true"), \
+            ("storeKey"=>"true"), \
+            ("refreshKrb5Config"=>"true"), \
+            ("useKeyTab"=>"true"), \
+            ("doNotPrompt"=>"true"), \
+            ("keyTab"=>"${kerberos.keytab}"), \
+            ("principal"=>"${kerberos.spn}") \
+            ] \
+        }])
+/subsystem=security/security-domain=app_spnego_fallback:add(cache-type=default)
+/subsystem=security/security-domain=app_spnego_fallback/authentication=classic:add( \
+    login-modules=[ \
+        {"code"=>"AdvancedLdap", "flag"=>"required", "module-options"=>[ \
+            ("baseCtxDN"=>"OU=USERS,DC=JBOSS,DC=ORG"), \
+            ("baseFilter"=>"(&(uid={0})(objectClass=person))"), \
+            ("bindCredential"=>"secret"), \
+            ("bindDN"=>"uid=ldap,OU=USERS,DC=JBOSS,DC=ORG"), \
+            ("java.naming.factory.initial"=>"com.sun.jndi.ldap.LdapCtxFactory"), \
+            ("java.naming.provider.url"=>"${ldap.url}"), \
+            ("java.naming.security.authentication"=>"simple"), \
+            ("password-stacking"=>"useFirstPass") \
+            ] \
+        }])
+/subsystem=security/security-domain=app_spnego:add(cache-type=default)
+/subsystem=security/security-domain=app_spnego/authentication=classic:add()
+/subsystem=security/security-domain=app_spnego/authentication=classic/login-module=krb:add( \
+    code="SPNEGO", \
+    flag="optional", \
+    module-options={ \
+        password-stacking=useFirstPass, \
+        serverSecurityDomain=host, \
+        usernamePasswordDomain=app_spnego_fallback, \
+        removeRealmFromPrincipal=true})
+
+/subsystem=security/security-domain=app_spnego/authentication=classic/login-module=ldap:add( \
+    code="AdvancedLdap", \
+    flag="required", \
+    module-options={ \
+        baseCtxDN="OU=USERS,DC=JBOSS,DC=ORG", \
+        baseFilter="(&(uid={0})(objectClass=person))", \
+        bindCredential="secret", \
+        bindDN="uid=ldap,OU=USERS,DC=JBOSS,DC=ORG", \
+        java.naming.factory.initial="com.sun.jndi.ldap.LdapCtxFactory", \
+        java.naming.provider.url="${ldap.url}", \
+        java.naming.security.authentication=simple, \
+        password-stacking=useFirstPass, \
+        rolesCtxDN="OU=GROUPS,DC=JBOSS,DC=ORG", \
+        roleAttributeID=cn, \
+        roleFilter="(&(member={1})(objectClass=groupOfNames))"})
+run-batch

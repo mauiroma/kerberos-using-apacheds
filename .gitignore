@@ -2,3 +2,8 @@ target/
 .classpath
 .project
 .settings/
+*.keytab
+krb5*.*
+eap7*/
+.idea/
+*.iml

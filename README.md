@@ -6,9 +6,12 @@ A sample Kerberos project using ApacheDS directory service.
 
 You should have [git](http://git-scm.com/) installed
 
+	$ git clone git://github.com/mauiroma/kerberos-using-apacheds.git
+
+Forked from:
+
 	$ git clone git://github.com/kwart/kerberos-using-apacheds.git
 
-or you can download [current sources as a zip file](https://github.com/kwart/kerberos-using-apacheds/archive/master.zip)
 
 ## Build the project
 
@@ -36,7 +39,7 @@ You can use property  `${hostname}` in the LDIF file and it will be replaced by 
 	uid: HTTP
 	userPassword: httppwd
 	krb5PrincipalName: HTTP/${hostname}@JBOSS.ORG
-	krb5KeyVersionNumber: 0 
+	krb5KeyVersionNumber: 0
 
 ### Bind address
 
@@ -59,8 +62,17 @@ Either configure the JBOSS.ORG realm in the `/etc/krb5.conf` or define alternati
 
 Authenticate as a sample user from your LDIF file (`test.ldif`)
 
-	$ kinit hnelson@JBOSS.ORG
-	Password for hnelson@JBOSS.ORG: secret
+	$ kinit tstark@JBOSS.ORG
+	Password for tstark@JBOSS.ORG: password
+
+Verify issued token:
+
+	$ klist
+
+Remove issued token:
+
+	$ kdestroy
+
 
 ## Stop running server
 
@@ -77,7 +89,22 @@ The project contains a simple Kerberos keytab generator:
 	-------------------------
 	Usage:
 	java -classpath target/kerberos-using-apacheds.jar org.jboss.test.kerberos.CreateKeytab <principalName> <passPhrase> [<principalName2> <passPhrase2> ...] <outputKeytabFile>
-	
-	$ java -classpath target/kerberos-using-apacheds.jar org.jboss.test.kerberos.CreateKeytab HTTP/localhost@JBOSS.ORG httppwd http.keytab
-	Keytab file was created: /home/kwart/kerberos-tests/http.keytab
 
+	$ java -classpath target/kerberos-using-apacheds.jar org.jboss.test.kerberos.CreateKeytab HTTP/localhost@JBOSS.ORG httppwd http.keytab
+	Keytab file was created: $PWD/http.keytab
+
+	$ ktutil -k http.keytab list
+
+## Configure EAP V 7.2
+
+	cd demo-app
+	$EAP72_HOME/bin/standalone.sh
+	$EAP72_HOME/bin/jboss-cli.sh -c --file=jboss-cli-command.xml
+	mvn cleap package
+	cp ../krb5.conf ../http.keytab $EAP72_HOME/
+	mv target/spnego-demo.war $EAP72_HOME/deployment
+	sh ./run-browser.sh
+
+if you used `tstark` user when you ran `kinit` command you be able to view `marvel` page but not dccomics page
+if you used `bwayne` user when you ran `kinit` command you be able to view `dccomics` page but not marvel page
+if you missed to authenticate with kerberos, the security method allow fallback with basic where the browser prompt in order to insert credentials

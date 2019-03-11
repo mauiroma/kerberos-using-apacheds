@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0">
+
+    <display-name>spnego-demo</display-name>
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Protect Marvel data</web-resource-name>
+            <url-pattern>/marvel/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>marvel</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Protect DCComics Data</web-resource-name>
+            <url-pattern>/dccomics/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>dccomics</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <security-role>
+        <role-name>dccomics</role-name>
+    </security-role>
+    <security-role>
+        <role-name>marvel</role-name>
+    </security-role>
+
+    <login-config>
+        <auth-method>SPNEGO,BASIC</auth-method>
+        <realm-name>SPNEGO</realm-name>
+    </login-config>
+
+</web-app>
