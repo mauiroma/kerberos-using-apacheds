@@ -99,13 +99,29 @@ The project contains a simple Kerberos keytab generator:
 
 ## Configure EAP V 7.2
 
-	cp krb5.conf http.keytab $EAP72_HOME/
+	cp krb5.conf http.keytab $EAP72_HOME/standalone/
 	$EAP72_HOME/bin/standalone.sh
 	$EAP72_HOME/bin/jboss-cli.sh -c --file=jboss-cli-command.xml
 	cd demo-app
 	mvn cleap package
 	mv target/spnego-demo.war $EAP72_HOME/deployment
 	sh ./run-browser.sh
+
+## Configure Browser
+
+The browser use the system krb5.conf, so you need to copy krb5.conf into `/etc/` dir
+
+	sudo cp /etc/krb5.conf /etc/krb5.conf_ORIGINAL
+	sudo cp krb5.conf /etc/
+
+### Chrome
+The script `run-browser.sh` open a Chrome istance where all settings are applied
+
+### Firefox
+Got to `about:config` and edit follow items:
+
+	network.negotiate-auth.trusted-uris = localhost
+	network.automatic-ntlm-auth.trusted-uris = localhost
 
 if you used `tstark` user when you ran `kinit` command you be able to view `marvel` page but not dccomics page
 

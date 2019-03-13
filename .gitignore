@@ -7,3 +7,4 @@ krb5*.*
 eap7*/
 .idea/
 *.iml
+*.code-workspace
