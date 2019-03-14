@@ -1,0 +1,48 @@
+if (outcome != success) of /system-property=ldap.url:read-resource
+    /system-property=ldap.url:add(value="ldap://localhost:10389")
+end-if
+
+if (outcome != success) of /subsystem=logging/logger=org.jboss.security:read-resource
+    /subsystem=logging/logger=org.jboss.security:add(category=org.jboss.security, level=TRACE)
+end-if
+
+if (outcome != success) of /subsystem=logging/logger=org.jboss.as.security:read-resource
+    /subsystem=logging/logger=org.jboss.as.security:add(category=org.jboss.as.security, level=TRACE)
+end-if
+
+if (outcome != success) of /system-property=java.security.krb5.conf:read-resource
+    /system-property=java.security.krb5.conf:add(value="${jboss.server.base.dir}/krb5.conf")
+end-if
+
+batch
+/subsystem=logging/console-handler=CONSOLE:write-attribute(name=level,value=TRACE)
+/system-property=kerberos.remote.keytab:add(value="${jboss.server.base.dir}/remote.keytab")
+/core-service=management/security-realm=krbRealm:add()
+/core-service=management/security-realm=krbRealm/server-identity=kerberos:add()
+/core-service=management/security-realm=krbRealm/server-identity=kerberos/keytab="remote/localhost@JBOSS.ORG":add(path=${kerberos.remote.keytab}, debug=true)
+/core-service=management/security-realm=krbRealm/authentication=kerberos:add(remove-realm=true)
+/subsystem=security/security-domain=krb-remoting-domain:add()
+/subsystem=security/security-domain=krb-remoting-domain/authentication=classic:add()
+/subsystem=security/security-domain=krb-remoting-domain/authentication=classic/login-module=Remoting:add(code=Remoting, flag=optional, module-options=[password-stacking=useFirstPass])
+/subsystem=security/security-domain=krb-remoting-domain/authentication=classic/login-module=RealmDirect:add(code=RealmDirect, flag=required, module-options=[password-stacking=useFirstPass, realm=krbRealm])
+/subsystem=security/security-domain=krb-remoting-domain/authentication=classic/login-module=ldap:add( \
+    code="AdvancedLdap", \
+    flag="required", \
+    module="org.jboss.security.negotiation", \
+    module-options={ \
+        baseCtxDN="OU=USERS,DC=JBOSS,DC=ORG", \
+        baseFilter="(&(uid={0})(objectClass=person))", \
+        bindCredential="secret", \
+        bindDN="uid=ldap,OU=USERS,DC=JBOSS,DC=ORG", \
+        java.naming.factory.initial="com.sun.jndi.ldap.LdapCtxFactory", \
+        java.naming.provider.url="${ldap.url}", \
+        java.naming.security.authentication=simple, \
+        password-stacking=useFirstPass, \
+        rolesCtxDN="OU=GROUPS,DC=JBOSS,DC=ORG", \
+        roleAttributeID=cn, \
+        roleFilter="(&(member={1})(objectClass=groupOfNames))"})
+
+
+/subsystem=remoting/http-connector=http-remoting-connector:write-attribute(name=security-realm, value=krbRealm)
+:reload()
+run-batch

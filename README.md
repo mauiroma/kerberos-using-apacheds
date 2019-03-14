@@ -107,10 +107,10 @@ The project contains a simple Kerberos keytab generator:
 
 ## Configure EAP V 7.2
 
-	cp krb5.conf http.keytab $EAP72_HOME/standalone/
+	cp krb5.conf http.keytab remote.keytab $EAP72_HOME/standalone/
 	$EAP72_HOME/bin/standalone.sh
-	$EAP72_HOME/bin/jboss-cli.sh -c --file=jboss-cli-command.xml
 	cd demo-app
+	$EAP72_HOME/bin/jboss-cli.sh -c --file=jboss-cli-command.cli
 	mvn cleap package
 	mv target/spnego-demo.war $EAP72_HOME/deployment
 	sh ./run-browser.sh

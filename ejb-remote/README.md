@@ -1,12 +1,24 @@
+# Setup EAP
+
+Run the script to apply the configuration:
+
+	$EAP72_HOME/bin/standalone.sh
+	$EAP72_HOME/bin/jboss-cli.sh -c --file=jboss-cli-command.cli
+
+
 # Build example
 
 This example requires that the apacheds is running and properly configured (follow the guide in this repo).
 
 ## Build Server
 
-> cd server-side 
+> cd server-side
 
 > mvn clean install -Dcheckstyle.skip
+
+### Install ejb in EAP
+
+> cp target/ejb-remote-server-side.jar $EAP72_HOME/standalone/deployments
 
 ## Build Client
 
@@ -14,23 +26,7 @@ This example requires that the apacheds is running and properly configured (foll
 
 > mvn clean package
 
-# Setup EAP
 
-## Configure the server
-
-Create the new keytab
-
-> java -classpath target/kerberos-using-apacheds.jar org.jboss.test.kerberos.CreateKeytab remote/localhost@JBOSS.ORG remotepwd remote.keytab
-
-Copy the `remote.keytab` to the $EAP_HOME/standalone path
-
-Run the script to apply the configuration:
-
-> script-name
-
-## Install ejb in EAP
-
-> cp server-side/target/ejb-remote-server-side.jar $EAP_HOME/standalone/deployments
 
 Check the log for success deploy
 
@@ -38,18 +34,19 @@ Check the log for success deploy
 
 Setup env variable `KRB5_CONFIG` to point a valid krb5 file:
 
-> KRB5_CONFIG=$PATH_TO/krb5.conf
+> export KRB5_CONFIG=$PATH_TO/krb5.conf
 
 You need to login with kerberos:
 
-> mkdir $PATH_TO/cc-cache/
+    mkdir /tmp/cc_cache
+    kinit -c /tmp/cc_cache/krbtest tstark@JBOSS.ORG
+    klist --cache=/tmp/cc_cache/krbtest
 
-> kinit -c $PATH_TO/cc-cache/krbtest tstark@JBOSS.ORG
 
 This will login the user tstartk
 
 Setup environment variable `KRB5CCNAME` so the runtime can access to the ticket cache we created:
-> KRB5CCNAME=$PATH_TO/cc-cache/krbtest
+> export KRB5CCNAME=/tmp/cc_cache/krbtest
 
 ## Run the client
 

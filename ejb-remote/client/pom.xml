@@ -15,42 +15,60 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.jboss.eap.quickstarts</groupId>
+    <!--parent>
+        <groupId>org.jboss.test.ejb</groupId>
         <artifactId>ejb-remote</artifactId>
-        <version>7.2.0.GA</version>
+        <version>1.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
-    </parent>
+    </parent-->
+
+    <groupId>org.jboss.test.ejb</groupId>
     <artifactId>ejb-remote-client</artifactId>
+    <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>Quickstart: ejb-remote - client</name>
-    <description>This project demonstrates how to access an EJB from a remote client; this is the client POM file
-    </description>
 
     <properties>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <krb5.base.path>/Users/mauiroma/Projects/Kerberos/kerberos-using-apacheds</krb5.base.path>
         <http>false</http>
     </properties>
+
+
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.jboss.bom</groupId>
+                <artifactId>eap-runtime-artifacts</artifactId>
+                <version>7.2.0.GA</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
 
         <!-- Include the ejb client jars -->
-        <dependency>
-            <groupId>org.jboss.eap</groupId>
-            <artifactId>wildfly-ejb-client-bom</artifactId>
-            <type>pom</type>
-            <scope>compile</scope>
-        </dependency>
 
         <!-- We depend on the EJB remote business interfaces of this application -->
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.jboss.test.ejb</groupId>
             <artifactId>ejb-remote-server-side</artifactId>
-            <version>${project.version}</version>
+            <version>1.0-SNAPSHOT</version>
             <type>ejb-client</type>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.eap</groupId>
+            <artifactId>wildfly-ejb-client-bom</artifactId>
+            <version>7.2.0.GA</version>
+            <type>pom</type>
+            <scope>runtime</scope>
         </dependency>
 
     </dependencies>
@@ -67,15 +85,12 @@
                     <executable>java</executable>
                     <workingDirectory>${project.build.directory}/exec-working-directory</workingDirectory>
                     <arguments>
-                        <argument>-Djava.security.auth.login.config=/Users/eljeko/redhat/development/BancaDItalia/Migrazione_Sportello_EAP7/ejb-remote/client/krb5-login.conf</argument>
+                        <argument>-Djava.security.auth.login.config=${basedir}/kerberos-login.conf</argument>
                         <argument>-Djavax.net.debug=all</argument>
                         <argument>-Dsun.security.krb5.debug=true</argument>
                         <argument>-Dsun.security.jgss.debug=true</argument>
                         <argument>-Djavax.security.auth.useSubjectCredsOnly=false</argument>
-                        <argument>
-                            -Djava.security.krb5.conf=/Volumes/pandora/redhat/Sportello/jboss-eap-7.2/standalone/krb5.conf
-                        </argument>
-
+                        <argument>-Djava.security.krb5.conf=${krb5.base.path}/krb5.conf</argument>
                         <argument>-Dhttp=${http}</argument>
                         <argument>-classpath</argument>
                         <classpath></classpath>
@@ -110,6 +125,8 @@
                 </configuration>
             </plugin>
         </plugins>
+
+
 
     </build>
 
