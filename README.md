@@ -97,6 +97,14 @@ The project contains a simple Kerberos keytab generator:
 
 	$ ktutil -k http.keytab list
 
+## Generate keytab for remoting connection (EJB)
+
+	$ java -classpath target/kerberos-using-apacheds.jar org.jboss.test.kerberos.CreateKeytab remote/localhost@JBOSS.ORG remotepwd remote.keytab
+	Keytab file was created: $PWD/remote.keytab
+
+	$ ktutil -k remote.keytab list
+
+
 ## Configure EAP V 7.2
 
 	cp krb5.conf http.keytab $EAP72_HOME/standalone/
@@ -109,7 +117,7 @@ The project contains a simple Kerberos keytab generator:
 
 ## Configure Browser
 
-The browser use the system krb5.conf, so you need to copy krb5.conf into `/etc/` dir
+The browser uses the system krb5.conf, so you need to copy krb5.conf into `/etc/` dir
 
 	sudo cp /etc/krb5.conf /etc/krb5.conf_ORIGINAL
 	sudo cp krb5.conf /etc/
