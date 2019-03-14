@@ -1,7 +1,7 @@
 #!/bin/bash
-
-#. set-env.sh
-
-#$BROWSER http://$BIND_ADDRESS:8080/spnego-demo/
-
-open /Applications/Google\ Chrome.app --args --auth-server-whitelist=localhost --auth-negotiate-delegate-whitelist=localhost --app=http://localhost:8080/spnego-demo
+CHROME_TEMP_BROWSER_DIR=/tmp/kerberos_browser
+if [ -d ${CHROME_TEMP_BROWSER_DIR} ]; then
+    rm -rf ${CHROME_TEMP_BROWSER_DIR}
+fi
+mkdir ${CHROME_TEMP_BROWSER_DIR}
+open -nF /Applications/Google\ Chrome.app --args --user-data-dir="${CHROME_TEMP_BROWSER_DIR}" --auth-server-whitelist=localhost --auth-negotiate-delegate-whitelist=localhost --incognito --no-default-browser-check --no-first-run http://localhost:8080/spnego-demo
