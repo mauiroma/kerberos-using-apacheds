@@ -50,4 +50,8 @@ Setup environment variable `KRB5CCNAME` so the runtime can access to the ticket 
 
 ## Run the client
 
+The client needs the krb5.conf, so copy the krb5.conf into `/etc/` dir
+	sudo cp /etc/krb5.conf /etc/krb5.conf_ORIGINAL
+	sudo cp krb5.conf /etc/
+
 > mvn exec:exec

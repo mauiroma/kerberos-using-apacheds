@@ -111,7 +111,7 @@ The project contains a simple Kerberos keytab generator:
 	$EAP72_HOME/bin/standalone.sh
 	cd demo-app
 	$EAP72_HOME/bin/jboss-cli.sh -c --file=jboss-cli-command.cli
-	mvn cleap package
+	mvn clean package
 	mv target/spnego-demo.war $EAP72_HOME/deployment
 	sh ./run-browser.sh
 

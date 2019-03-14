@@ -34,7 +34,6 @@
     <properties>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
-        <krb5.base.path>/Users/mauiroma/Projects/Kerberos/kerberos-using-apacheds</krb5.base.path>
         <http>false</http>
     </properties>
 
@@ -90,7 +89,7 @@
                         <argument>-Dsun.security.krb5.debug=true</argument>
                         <argument>-Dsun.security.jgss.debug=true</argument>
                         <argument>-Djavax.security.auth.useSubjectCredsOnly=false</argument>
-                        <argument>-Djava.security.krb5.conf=${krb5.base.path}/krb5.conf</argument>
+                        <argument>-Djava.security.krb5.conf=/etc/krb5.conf</argument>
                         <argument>-Dhttp=${http}</argument>
                         <argument>-classpath</argument>
                         <classpath></classpath>
